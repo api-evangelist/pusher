@@ -1,0 +1,89 @@
+{
+    "name": "Pusher",
+    "description": "Pusher empowers developer with API to create collaboration & communication features in their web and mobile apps.",
+    "image": "http:\/\/kinlane-productions.s3.amazonaws.com\/screen-capture-api\/44-pusher.jpg",
+    "tags": [
+        "api lifeycle",
+        "api united kingdom",
+        "have api",
+        "html5",
+        "infrastructure",
+        "webhook implementations",
+        "websockets"
+    ],
+    "created": "2019-12-19",
+    "modified": "2019-12-19",
+    "url": "https:\/\/raw.githubusercontent.com\/api-evangelist\/pusher\/master\/apis.json",
+    "specificationVersion": "0.14",
+    "apis": [
+        {
+            "name": "Pusher",
+            "description": null,
+            "image": "http:\/\/kinlane-productions.s3.amazonaws.com\/screen-capture-api\/44-pusher.jpg",
+            "humanURL": "https:\/\/pusher.com",
+            "baseURL": "",
+            "tags": [],
+            "properties": [
+                {
+                    "type": "x-openapi",
+                    "url": "https:\/\/raw.githubusercontent.com\/api-evangelist\/1forge\/master\/pusher-openapi.json"
+                }
+            ]
+        }
+    ],
+    "include": [],
+    "x-common": [
+        {
+            "type": "Hacker News Search",
+            "url": "Pusher"
+        },
+        {
+            "type": "Stack Exchange Search",
+            "url": "Pusher"
+        },
+        {
+            "type": "Website",
+            "url": "https:\/\/pusher.com"
+        },
+        {
+            "type": "Blog",
+            "url": "http:\/\/blog.pusher.com\/"
+        },
+        {
+            "type": "Blog RSS",
+            "url": "http:\/\/feeds.feedburner.com\/pusherb"
+        },
+        {
+            "type": "Crunchbase",
+            "url": "https:\/\/crunchbase.com\/organization\/pusher"
+        },
+        {
+            "type": "Crunchbase",
+            "url": "http:\/\/www.crunchbase.com\/company\/pusher"
+        },
+        {
+            "type": "Email",
+            "url": "support@pusher.com"
+        },
+        {
+            "type": "Github",
+            "url": "https:\/\/github.com\/pusher"
+        },
+        {
+            "type": "Reddit Search",
+            "url": "Pusher"
+        },
+        {
+            "type": "Twitter",
+            "url": "https:\/\/twitter.com\/pusher"
+        },
+        {
+            "type": "Webhooks",
+            "url": "https:\/\/pusher.com\/docs\/webhooks"
+        },
+        {
+            "type": "Website",
+            "url": "http:\/\/pusher.com\/"
+        }
+    ]
+}
