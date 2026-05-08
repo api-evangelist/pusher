@@ -5,31 +5,64 @@ provider: Pusher
 providerId: pusher
 created: '2026-05-08'
 modified: '2026-05-08'
-reconciled: false
+reconciled: true
 tags:
-- Realtime
-- WebSockets
-- Pub/Sub
-- Chat
-- Notifications
-- Rate Limiting
-- Quotas
-- Throttling
-description: Placeholder rate-limit artifact for Pusher. Replace with real limits once researched.
-notes: Initial scaffold — limits have not yet been reconciled.
+  - Realtime
+  - Rate Limiting
+description: >-
+  Pusher Channels gates per-app concurrent connections and daily message volume by plan tier
+  (100 connections / 200K msg/day on Sandbox up to 30K / 90M on Growth Plus). Server-side HTTP
+  publish endpoints additionally enforce a per-channel-per-second message cap. Beams enforces
+  per-publish payload size and per-instance throughput caps. HTTP 429 is returned when caps are
+  exceeded.
 sources:
-- https://pusher.com/
+  - https://pusher.com/docs/channels
+  - https://pusher.com/channels/pricing
 responseCodes:
   throttled: 429
 limits:
-- name: Default
-  scope: account
-  metric: varies
-  limit: see provider documentation
-  notes: Pending reconciliation.
+  - name: Sandbox connections
+    scope: app
+    metric: concurrent_connections
+    limit: 100
+  - name: Sandbox messages
+    scope: app
+    metric: messages_per_day
+    limit: 200000
+  - name: Pro connections
+    scope: app
+    metric: concurrent_connections
+    limit: 2000
+  - name: Pro messages
+    scope: app
+    metric: messages_per_day
+    limit: 4000000
+  - name: Business connections
+    scope: app
+    metric: concurrent_connections
+    limit: 5000
+  - name: Business messages
+    scope: app
+    metric: messages_per_day
+    limit: 10000000
+  - name: Growth Plus connections
+    scope: app
+    metric: concurrent_connections
+    limit: 30000
+  - name: Growth Plus messages
+    scope: app
+    metric: messages_per_day
+    limit: 90000000
+  - name: Enterprise
+    scope: app
+    metric: concurrent_connections
+    limit: -1
+    notes: Sales-led contract.
 policies:
-- name: Backoff Strategy
-  description: Clients should implement exponential backoff with jitter and honor any Retry-After header.
+  - name: Backoff Strategy
+    description: Honor 429 Retry-After and apply exponential backoff with jitter.
+  - name: Per-channel publish
+    description: Avoid publishing more than ~10 events/sec to a single channel; shard across channels.
 maintainers:
-- FN: Kin Lane
-  email: kin@apievangelist.com
+  - FN: Kin Lane
+    email: kin@apievangelist.com

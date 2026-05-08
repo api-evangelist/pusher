@@ -2,22 +2,83 @@ aid: pusher
 url: https://raw.githubusercontent.com/api-evangelist/pusher/refs/heads/main/apis.yml
 name: Pusher
 x-type: company
-description: >-
-  Pusher is a realtime API platform offering Channels (pub/sub), Beams (push notifications), and Chatkit. WebSocket and HTTP APIs for live experiences.
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
   - Realtime
   - WebSockets
   - Pub/Sub
-  - Chat
-  - Notifications
+  - Push Notifications
+  - Messaging
 created: '2026-05-08'
 modified: '2026-05-08'
 specificationVersion: '0.19'
-apis: []
+description: >-
+  Pusher is a realtime communication platform owned by MessageBird/Bird. Its primary product
+  Channels provides pub/sub messaging over WebSocket and HTTP; Beams provides device push
+  notifications. Authentication uses an app key + secret per Pusher app. Channels and Beams
+  are still actively sold; the older Chatkit product was sunset.
+apis:
+  - aid: pusher:channels-api
+    name: Pusher Channels API
+    tags:
+      - Pub/Sub
+      - WebSockets
+      - HTTP
+      - Messaging
+    image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+    baseURL: https://api-{cluster}.pusher.com/apps/{app_id}
+    humanURL: https://pusher.com/docs/channels
+    description: >-
+      Pub/sub channels over WebSocket (client) and HTTP (server publish). Public, private, and
+      presence channels supported. WebSocket endpoint at ws-{cluster}.pusher.com. Cluster
+      hostnames include eu, us2, us3, ap1, ap2, ap3, etc.
+    properties:
+      - type: Documentation
+        url: https://pusher.com/docs/channels
+      - type: Pricing
+        url: https://pusher.com/channels/pricing
+    x-features:
+      - Public, private, presence channels
+      - End-to-end encryption (E2E)
+      - Webhooks for events
+      - Multi-region clusters
+    x-use-cases:
+      - In-app chat
+      - Live dashboards
+      - Realtime collaboration
+  - aid: pusher:beams-api
+    name: Pusher Beams API
+    tags:
+      - Push Notifications
+      - Mobile
+      - Web Push
+    image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+    baseURL: https://{instance_id}.pushnotifications.pusher.com
+    humanURL: https://pusher.com/docs/beams
+    description: Server API for sending iOS, Android, and Web push notifications via FCM, APNs, and Web Push.
+    properties:
+      - type: Documentation
+        url: https://pusher.com/docs/beams
+      - type: Pricing
+        url: https://pusher.com/beams/pricing
+    x-features:
+      - Multi-platform push (iOS, Android, Web)
+      - Authenticated user-targeted publishes
+      - Device interest subscriptions
+    x-use-cases:
+      - Push to mobile apps
+      - Web push notifications
 common:
-  - type: Website
+  - type: Portal
     url: https://pusher.com/
+  - type: Documentation
+    url: https://pusher.com/docs
+  - type: Pricing
+    url: https://pusher.com/channels/pricing
+  - type: GitHub
+    url: https://github.com/pusher
+  - type: Status
+    url: https://status.pusher.com/
   - type: Plans
     url: plans/pusher-plans-pricing.yml
   - type: RateLimits
