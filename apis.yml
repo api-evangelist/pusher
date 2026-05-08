@@ -1,0 +1,29 @@
+aid: pusher
+url: https://raw.githubusercontent.com/api-evangelist/pusher/refs/heads/main/apis.yml
+name: Pusher
+x-type: company
+description: >-
+  Pusher is a realtime API platform offering Channels (pub/sub), Beams (push notifications), and Chatkit. WebSocket and HTTP APIs for live experiences.
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+tags:
+  - Realtime
+  - WebSockets
+  - Pub/Sub
+  - Chat
+  - Notifications
+created: '2026-05-08'
+modified: '2026-05-08'
+specificationVersion: '0.19'
+apis: []
+common:
+  - type: Website
+    url: https://pusher.com/
+  - type: Plans
+    url: plans/pusher-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/pusher-rate-limits.yml
+  - type: FinOps
+    url: finops/pusher-finops.yml
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
