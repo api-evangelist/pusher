@@ -1,7 +1,7 @@
 aid: pusher
 url: https://raw.githubusercontent.com/api-evangelist/pusher/refs/heads/main/apis.yml
 name: Pusher
-x-type: company
+kind: company
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
   - Realtime
@@ -77,7 +77,7 @@ common:
     url: https://pusher.com/channels/pricing
   - type: GitHub
     url: https://github.com/pusher
-  - type: Status
+  - type: StatusPage
     url: https://status.pusher.com/
   - type: Plans
     url: plans/pusher-plans-pricing.yml
