@@ -69,6 +69,8 @@ apis:
       - Push to mobile apps
       - Web push notifications
 common:
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/pusher-app
   - type: Portal
     url: https://pusher.com/
   - type: Documentation
