@@ -1,0 +1,814 @@
+asyncapi: '2.6.0'
+info:
+  title: Pusher Channels WebSocket Protocol
+  version: '7.0.0'
+  description: |
+    AsyncAPI definition of the Pusher Channels public WebSocket wire protocol
+    (protocol version 7). Pusher Channels is a pub/sub realtime messaging
+    service. Clients connect over WebSocket to `ws-{cluster}.pusher.com`,
+    optionally authenticate (`pusher:signin`), subscribe to public, private,
+    presence, encrypted, or cache channels, receive server-published events,
+    and may trigger `client-*` events back to other subscribers on authorized
+    channels.
+
+    All messages share a JSON envelope:
+
+    ```json
+    { "event": "...", "channel": "...", "data": "..." }
+    ```
+
+    The `data` field is itself a JSON-encoded string in most server-sent
+    events; the inner schema for each event type is captured in this document.
+  contact:
+    name: Pusher
+    url: https://pusher.com/
+  license:
+    name: Pusher Terms
+    url: https://pusher.com/legal/terms-of-use
+externalDocs:
+  description: Pusher Channels WebSocket protocol v7 reference
+  url: https://pusher.com/docs/channels/library_auth_reference/pusher-websockets-protocol/
+
+defaultContentType: application/json
+
+servers:
+  production:
+    url: 'ws-{cluster}.pusher.com:443'
+    protocol: wss
+    description: |
+      Pusher Channels WebSocket endpoint. The full URL takes the form
+      `wss://ws-{cluster}.pusher.com:443/app/{app_key}?protocol=7&client=js&version={version}&flash=false`.
+      Cluster hostnames include `mt1`, `eu`, `us2`, `us3`, `ap1`, `ap2`, `ap3`,
+      `sa1`, and others. The path `/app/{app_key}` selects the Pusher
+      application, and required query parameters are `protocol=7`, a `client`
+      library identifier, and a `version` string.
+    variables:
+      cluster:
+        default: mt1
+        description: Pusher cluster identifier (e.g. mt1, eu, us2, us3, ap1, ap2, ap3, sa1).
+        enum:
+          - mt1
+          - eu
+          - us2
+          - us3
+          - ap1
+          - ap2
+          - ap3
+          - ap4
+          - sa1
+      app_key:
+        default: APP_KEY
+        description: Pusher application key (public, identifies the app).
+      version:
+        default: '7.0.3'
+        description: Client library version string reported by the connecting client.
+
+channels:
+  # ---------------------------------------------------------------------------
+  # SYSTEM EVENTS (connection lifecycle, errors, heartbeats)
+  # ---------------------------------------------------------------------------
+  pusher/connection_established:
+    description: |
+      Sent by the server immediately after a successful WebSocket handshake to
+      hand the client its `socket_id` and the server-recommended
+      `activity_timeout` (seconds of idle before the client should ping).
+    subscribe:
+      operationId: onConnectionEstablished
+      summary: Receive connection-established acknowledgement
+      message:
+        $ref: '#/components/messages/PusherConnectionEstablished'
+
+  pusher/error:
+    description: |
+      Sent by the server on any protocol error. The data payload contains a
+      human-readable `message` and a numeric `code` from the documented
+      4000-4399 ranges (non-recoverable, reconnect-with-delay,
+      reconnect-immediately, or other).
+    subscribe:
+      operationId: onError
+      summary: Receive a protocol error
+      message:
+        $ref: '#/components/messages/PusherError'
+
+  pusher/ping:
+    description: |
+      Heartbeat. The server sends `pusher:ping` if no activity is seen within
+      the activity timeout; the client may also send `pusher:ping` to the
+      server. The recipient must reply with `pusher:pong`.
+    publish:
+      operationId: sendPing
+      summary: Send a heartbeat ping
+      message:
+        $ref: '#/components/messages/PusherPing'
+    subscribe:
+      operationId: onPing
+      summary: Receive a heartbeat ping
+      message:
+        $ref: '#/components/messages/PusherPing'
+
+  pusher/pong:
+    description: |
+      Reply to a `pusher:ping`. Sent in both directions. If the server does
+      not receive a `pusher:pong` within the pong timeout (recommended 30s),
+      it closes the connection with error code 4201.
+    publish:
+      operationId: sendPong
+      summary: Send a heartbeat pong reply
+      message:
+        $ref: '#/components/messages/PusherPong'
+    subscribe:
+      operationId: onPong
+      summary: Receive a heartbeat pong reply
+      message:
+        $ref: '#/components/messages/PusherPong'
+
+  pusher/signin:
+    description: |
+      User authentication. Client sends `pusher:signin` with a server-signed
+      `auth` token and a `user_data` JSON string containing at least an `id`
+      field (and optionally `user_info` and a `watchlist` of up to 100 user
+      IDs). Used to associate the connection with an authenticated user for
+      user authentication, watchlists, and end-to-end features.
+    publish:
+      operationId: sendSignin
+      summary: Authenticate the current connection as a user
+      message:
+        $ref: '#/components/messages/PusherSignin'
+
+  pusher/signin_success:
+    description: |
+      Acknowledgement of a successful `pusher:signin`. The data echoes back
+      the signed `user_data` and `auth` payload.
+    subscribe:
+      operationId: onSigninSuccess
+      summary: Receive sign-in confirmation
+      message:
+        $ref: '#/components/messages/PusherSigninSuccess'
+
+  # ---------------------------------------------------------------------------
+  # SUBSCRIPTION EVENTS
+  # ---------------------------------------------------------------------------
+  pusher/subscribe:
+    description: |
+      Client requests a subscription to a channel. For private, presence,
+      encrypted, and cache channels the `auth` field carries the
+      server-issued HMAC signature; presence channels additionally require
+      a `channel_data` JSON string containing the `user_id` and optional
+      `user_info`.
+    publish:
+      operationId: sendSubscribe
+      summary: Subscribe to a channel
+      message:
+        $ref: '#/components/messages/PusherSubscribe'
+
+  pusher/unsubscribe:
+    description: |
+      Client requests removal of a previous subscription. No server response
+      is sent.
+    publish:
+      operationId: sendUnsubscribe
+      summary: Unsubscribe from a channel
+      message:
+        $ref: '#/components/messages/PusherUnsubscribe'
+
+  pusher_internal/subscription_succeeded:
+    description: |
+      Server confirms a subscription. For public, private, encrypted, and
+      cache channels the data payload is an empty object (cache channels may
+      additionally replay the last cached event). For presence channels the
+      data payload contains the current `presence` member list.
+    subscribe:
+      operationId: onSubscriptionSucceeded
+      summary: Receive subscription confirmation
+      message:
+        $ref: '#/components/messages/PusherInternalSubscriptionSucceeded'
+
+  pusher/subscription_error:
+    description: |
+      Server-sent failure for a subscription request, typically due to an
+      invalid auth signature on a private, presence, encrypted, or cache
+      channel.
+    subscribe:
+      operationId: onSubscriptionError
+      summary: Receive a subscription error
+      message:
+        $ref: '#/components/messages/PusherSubscriptionError'
+
+  pusher_internal/member_added:
+    description: |
+      Server informs subscribers of a presence channel that a new member has
+      joined. Data contains the new member's `user_id` and optional
+      `user_info`.
+    subscribe:
+      operationId: onMemberAdded
+      summary: Receive presence-channel member-added notification
+      message:
+        $ref: '#/components/messages/PusherInternalMemberAdded'
+
+  pusher_internal/member_removed:
+    description: |
+      Server informs subscribers of a presence channel that a member has
+      left. Data contains the departing member's `user_id`.
+    subscribe:
+      operationId: onMemberRemoved
+      summary: Receive presence-channel member-removed notification
+      message:
+        $ref: '#/components/messages/PusherInternalMemberRemoved'
+
+  # ---------------------------------------------------------------------------
+  # CHANNEL EVENT FLOWS (server-published and client-triggered)
+  # ---------------------------------------------------------------------------
+  channel/event:
+    description: |
+      Generic channel event delivered by the server to subscribers. Carries
+      the application-defined `event` name, the `channel` it was triggered
+      on, a JSON-encoded `data` payload, and, when the publish was made via
+      a signed-in user, an optional `user_id`. Encrypted channels deliver
+      the same envelope, but `data` contains `ciphertext` and `nonce`
+      fields produced by libsodium secretbox.
+    subscribe:
+      operationId: onChannelEvent
+      summary: Receive an application channel event
+      message:
+        oneOf:
+          - $ref: '#/components/messages/ChannelEvent'
+          - $ref: '#/components/messages/EncryptedChannelEvent'
+
+  channel/client_event:
+    description: |
+      Client-triggered event. The `event` name must start with `client-`,
+      and the `channel` must be a private (`private-*`) or presence
+      (`presence-*`) channel (encrypted/cache variants of these prefixes
+      included). The server forwards the event to other subscribers but
+      does not echo it back to the sender. Rate limited; exceeding the
+      limit yields a `pusher:error` with code 4301.
+    publish:
+      operationId: sendClientEvent
+      summary: Trigger a client event on an authorized channel
+      message:
+        $ref: '#/components/messages/ClientEvent'
+
+components:
+  messages:
+    # ---------- system ----------
+    PusherConnectionEstablished:
+      name: PusherConnectionEstablished
+      title: pusher:connection_established
+      summary: Server-sent connection acknowledgement.
+      contentType: application/json
+      payload:
+        type: object
+        required: [event, data]
+        properties:
+          event:
+            type: string
+            const: pusher:connection_established
+          data:
+            description: JSON-encoded string of ConnectionEstablishedData.
+            type: string
+      examples:
+        - name: default
+          payload:
+            event: pusher:connection_established
+            data: '{"socket_id":"123.456","activity_timeout":120}'
+      x-data-schema:
+        $ref: '#/components/schemas/ConnectionEstablishedData'
+
+    PusherError:
+      name: PusherError
+      title: pusher:error
+      summary: Server-sent protocol error.
+      contentType: application/json
+      payload:
+        type: object
+        required: [event, data]
+        properties:
+          event:
+            type: string
+            const: pusher:error
+          data:
+            description: JSON-encoded string of ErrorData.
+            type: string
+      examples:
+        - name: unauthorized
+          payload:
+            event: pusher:error
+            data: '{"message":"Connection unauthorized","code":4009}'
+      x-data-schema:
+        $ref: '#/components/schemas/ErrorData'
+
+    PusherPing:
+      name: PusherPing
+      title: pusher:ping
+      summary: Heartbeat ping (sent either direction).
+      contentType: application/json
+      payload:
+        type: object
+        required: [event, data]
+        properties:
+          event:
+            type: string
+            const: pusher:ping
+          data:
+            description: Empty JSON object encoded as a string.
+            type: string
+            const: '{}'
+      examples:
+        - name: default
+          payload:
+            event: pusher:ping
+            data: '{}'
+
+    PusherPong:
+      name: PusherPong
+      title: pusher:pong
+      summary: Heartbeat pong reply.
+      contentType: application/json
+      payload:
+        type: object
+        required: [event, data]
+        properties:
+          event:
+            type: string
+            const: pusher:pong
+          data:
+            description: Empty JSON object encoded as a string.
+            type: string
+            const: '{}'
+      examples:
+        - name: default
+          payload:
+            event: pusher:pong
+            data: '{}'
+
+    PusherSignin:
+      name: PusherSignin
+      title: pusher:signin
+      summary: Client-sent user sign-in.
+      contentType: application/json
+      payload:
+        type: object
+        required: [event, data]
+        properties:
+          event:
+            type: string
+            const: pusher:signin
+          data:
+            type: object
+            required: [auth, user_data]
+            properties:
+              auth:
+                type: string
+                description: 'Signature in the form `APP_KEY:HMAC_SHA256(socket_id::user::user_data)`.'
+              user_data:
+                type: string
+                description: |
+                  JSON-encoded string with required `id`, optional `user_info`,
+                  and optional `watchlist` (array of up to 100 user IDs).
+      examples:
+        - name: default
+          payload:
+            event: pusher:signin
+            data:
+              auth: 'APP_KEY:signature'
+              user_data: '{"id":"user-1","user_info":{"name":"Phil"},"watchlist":["user-2","user-3"]}'
+
+    PusherSigninSuccess:
+      name: PusherSigninSuccess
+      title: pusher:signin_success
+      summary: Server-sent sign-in acknowledgement.
+      contentType: application/json
+      payload:
+        type: object
+        required: [event, data]
+        properties:
+          event:
+            type: string
+            const: pusher:signin_success
+          data:
+            description: JSON-encoded string echoing the signed user_data and auth.
+            type: string
+      examples:
+        - name: default
+          payload:
+            event: pusher:signin_success
+            data: '{"user_data":"{\"id\":\"user-1\"}","auth":"APP_KEY:signature"}'
+      x-data-schema:
+        $ref: '#/components/schemas/SigninSuccessData'
+
+    # ---------- subscription ----------
+    PusherSubscribe:
+      name: PusherSubscribe
+      title: pusher:subscribe
+      summary: Client-sent channel subscription request.
+      contentType: application/json
+      payload:
+        type: object
+        required: [event, data]
+        properties:
+          event:
+            type: string
+            const: pusher:subscribe
+          data:
+            type: object
+            required: [channel]
+            properties:
+              channel:
+                type: string
+                description: Channel name. Prefix determines type (see x-channel-types).
+              auth:
+                type: string
+                description: 'Required for private/presence/encrypted/cache channels. Format `APP_KEY:HMAC_SHA256(socket_id:channel_name[:channel_data])`.'
+              channel_data:
+                type: string
+                description: 'JSON-encoded `{ user_id, user_info? }` required for presence channels.'
+      examples:
+        - name: public
+          payload:
+            event: pusher:subscribe
+            data:
+              channel: my-channel
+        - name: presence
+          payload:
+            event: pusher:subscribe
+            data:
+              channel: presence-room-1
+              auth: 'APP_KEY:signature'
+              channel_data: '{"user_id":"user-1","user_info":{"name":"Phil"}}'
+
+    PusherUnsubscribe:
+      name: PusherUnsubscribe
+      title: pusher:unsubscribe
+      summary: Client-sent channel unsubscription.
+      contentType: application/json
+      payload:
+        type: object
+        required: [event, data]
+        properties:
+          event:
+            type: string
+            const: pusher:unsubscribe
+          data:
+            type: object
+            required: [channel]
+            properties:
+              channel:
+                type: string
+      examples:
+        - name: default
+          payload:
+            event: pusher:unsubscribe
+            data:
+              channel: my-channel
+
+    PusherInternalSubscriptionSucceeded:
+      name: PusherInternalSubscriptionSucceeded
+      title: pusher_internal:subscription_succeeded
+      summary: Server-sent confirmation of subscription.
+      contentType: application/json
+      payload:
+        type: object
+        required: [event, channel, data]
+        properties:
+          event:
+            type: string
+            const: pusher_internal:subscription_succeeded
+          channel:
+            type: string
+          data:
+            description: |
+              JSON-encoded string. Empty object for non-presence channels; for
+              presence channels contains a `presence` member with `ids`,
+              `hash`, and `count`.
+            type: string
+      examples:
+        - name: public
+          payload:
+            event: pusher_internal:subscription_succeeded
+            channel: my-channel
+            data: '{}'
+        - name: presence
+          payload:
+            event: pusher_internal:subscription_succeeded
+            channel: presence-room-1
+            data: '{"presence":{"ids":["user-1","user-2"],"hash":{"user-1":{"name":"Phil"},"user-2":{"name":"Mae"}},"count":2}}'
+      x-data-schema:
+        $ref: '#/components/schemas/SubscriptionSucceededData'
+
+    PusherSubscriptionError:
+      name: PusherSubscriptionError
+      title: pusher:subscription_error
+      summary: Server-sent subscription failure.
+      contentType: application/json
+      payload:
+        type: object
+        required: [event, channel, data]
+        properties:
+          event:
+            type: string
+            const: pusher:subscription_error
+          channel:
+            type: string
+          data:
+            description: JSON-encoded string with error details (message/code/type/status when available).
+            type: string
+      examples:
+        - name: default
+          payload:
+            event: pusher:subscription_error
+            channel: private-foo
+            data: '{"type":"AuthError","error":"Invalid signature","status":401}'
+
+    PusherInternalMemberAdded:
+      name: PusherInternalMemberAdded
+      title: pusher_internal:member_added
+      summary: Server-sent presence-channel member-added event.
+      contentType: application/json
+      payload:
+        type: object
+        required: [event, channel, data]
+        properties:
+          event:
+            type: string
+            const: pusher_internal:member_added
+          channel:
+            type: string
+            description: A presence channel name (`presence-*`).
+          data:
+            description: JSON-encoded MemberAddedData.
+            type: string
+      examples:
+        - name: default
+          payload:
+            event: pusher_internal:member_added
+            channel: presence-room-1
+            data: '{"user_id":"user-2","user_info":{"name":"Mae"}}'
+      x-data-schema:
+        $ref: '#/components/schemas/MemberAddedData'
+
+    PusherInternalMemberRemoved:
+      name: PusherInternalMemberRemoved
+      title: pusher_internal:member_removed
+      summary: Server-sent presence-channel member-removed event.
+      contentType: application/json
+      payload:
+        type: object
+        required: [event, channel, data]
+        properties:
+          event:
+            type: string
+            const: pusher_internal:member_removed
+          channel:
+            type: string
+            description: A presence channel name (`presence-*`).
+          data:
+            description: JSON-encoded MemberRemovedData.
+            type: string
+      examples:
+        - name: default
+          payload:
+            event: pusher_internal:member_removed
+            channel: presence-room-1
+            data: '{"user_id":"user-2"}'
+      x-data-schema:
+        $ref: '#/components/schemas/MemberRemovedData'
+
+    # ---------- application channel events ----------
+    ChannelEvent:
+      name: ChannelEvent
+      title: Application channel event
+      summary: Server-delivered application event on a public, private, presence, or cache channel.
+      contentType: application/json
+      payload:
+        type: object
+        required: [event, channel, data]
+        properties:
+          event:
+            type: string
+            description: Application-defined event name. Must not start with `pusher:` or `pusher_internal:`.
+          channel:
+            type: string
+          data:
+            type: string
+            description: JSON-encoded payload defined by the application.
+          user_id:
+            type: string
+            description: Present when the event was triggered by an authenticated client and the channel is a presence channel.
+      examples:
+        - name: default
+          payload:
+            event: new-message
+            channel: chat-room-1
+            data: '{"text":"Hello"}'
+        - name: presence-with-user
+          payload:
+            event: new-message
+            channel: presence-room-1
+            data: '{"text":"Hello"}'
+            user_id: user-1
+
+    EncryptedChannelEvent:
+      name: EncryptedChannelEvent
+      title: Encrypted channel event
+      summary: Server-delivered event on a `private-encrypted-*` channel; payload is libsodium secretbox-encrypted.
+      contentType: application/json
+      payload:
+        type: object
+        required: [event, channel, data]
+        properties:
+          event:
+            type: string
+          channel:
+            type: string
+            description: Encrypted channel name (`private-encrypted-*`).
+          data:
+            type: string
+            description: 'JSON-encoded `{ ciphertext, nonce }` (both base64), to be decrypted with the shared channel secret.'
+      examples:
+        - name: default
+          payload:
+            event: secret-message
+            channel: private-encrypted-room-1
+            data: '{"nonce":"4cnFR2y...","ciphertext":"7hG2...=="}'
+
+    ClientEvent:
+      name: ClientEvent
+      title: Client-triggered event
+      summary: Client-published event on a private or presence channel. Event name must start with `client-`.
+      contentType: application/json
+      payload:
+        type: object
+        required: [event, channel, data]
+        properties:
+          event:
+            type: string
+            pattern: '^client-'
+            description: Must start with `client-`.
+          channel:
+            type: string
+            pattern: '^(private-|presence-)'
+            description: Must be a private (`private-*`, including `private-encrypted-*` and `private-cache-*`) or presence (`presence-*`, including `presence-cache-*`) channel.
+          data:
+            description: 'Application-defined payload. May be sent as an object; some libraries also send it as a JSON-encoded string.'
+            oneOf:
+              - type: object
+              - type: string
+      examples:
+        - name: typing
+          payload:
+            event: client-typing
+            channel: private-chat-room-1
+            data:
+              isTyping: true
+
+  schemas:
+    # ---------- envelope data payloads (inner JSON) ----------
+    ConnectionEstablishedData:
+      type: object
+      required: [socket_id, activity_timeout]
+      properties:
+        socket_id:
+          type: string
+          description: Unique identifier for this WebSocket connection (used in auth signing).
+          example: '123.456'
+        activity_timeout:
+          type: integer
+          description: Server-recommended seconds of inactivity before the client should send `pusher:ping`.
+          example: 120
+
+    ErrorData:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+          description: Human-readable error message.
+        code:
+          type: integer
+          description: |
+            Numeric error code. See x-error-codes:
+            4000-4099 = do not reconnect;
+            4100-4199 = reconnect after >= 1s;
+            4200-4299 = reconnect immediately;
+            4300-4399 = other (e.g. 4301 client event rate limit, 4302 watchlist size exceeded).
+
+    SigninSuccessData:
+      type: object
+      properties:
+        user_data:
+          type: string
+          description: JSON-encoded user data that was signed in.
+        auth:
+          type: string
+          description: The auth token used for sign-in.
+
+    SubscriptionSucceededData:
+      description: Inner data for pusher_internal:subscription_succeeded.
+      oneOf:
+        - type: object
+          title: NonPresenceSubscriptionSucceeded
+          description: Empty object delivered for public, private, encrypted, and cache channels.
+        - type: object
+          title: PresenceSubscriptionSucceeded
+          required: [presence]
+          properties:
+            presence:
+              type: object
+              required: [ids, hash, count]
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: string
+                  description: User IDs currently subscribed to the presence channel.
+                hash:
+                  type: object
+                  additionalProperties: true
+                  description: Map of user_id to user_info object for each present user.
+                count:
+                  type: integer
+                  description: Number of users currently subscribed.
+
+    MemberAddedData:
+      type: object
+      required: [user_id]
+      properties:
+        user_id:
+          type: string
+        user_info:
+          description: Optional public user info supplied when the user subscribed.
+
+    MemberRemovedData:
+      type: object
+      required: [user_id]
+      properties:
+        user_id:
+          type: string
+
+x-channel-types:
+  description: |
+    Pusher Channels distinguishes channels by name prefix. The wire envelope
+    is identical; the prefix determines what auth is required and what
+    additional protocol behavior applies.
+  types:
+    public:
+      prefix: ''
+      pattern: '^(?!private-|presence-).+'
+      auth: none
+      description: Open to any client. Subscribe with just a channel name.
+      example: my-channel
+    private:
+      prefix: private-
+      pattern: '^private-(?!encrypted-|cache-).+'
+      auth: signed
+      description: Requires `auth` signature from your server. Supports client events.
+      example: private-chat-room-1
+    presence:
+      prefix: presence-
+      pattern: '^presence-.+'
+      auth: signed
+      description: Requires `auth` signature and `channel_data` with `user_id`. Server tracks members and emits `pusher_internal:member_added` / `pusher_internal:member_removed`.
+      example: presence-room-1
+    encrypted:
+      prefix: private-encrypted-
+      pattern: '^private-encrypted-.+'
+      auth: signed
+      description: Like private, but event data is encrypted with libsodium secretbox using a shared channel master key. Server cannot read the payload. Client events are not permitted; only the server may publish.
+      example: private-encrypted-room-1
+    private_cache:
+      prefix: private-cache-
+      pattern: '^private-cache-.+'
+      auth: signed
+      description: Private channel whose last event is cached. New subscribers receive the most recent cached event immediately on `pusher_internal:subscription_succeeded`; if no event is cached the server emits `pusher:cache_miss`.
+      example: private-cache-prices
+
+x-error-codes:
+  description: Documented protocol error codes for `pusher:error`.
+  ranges:
+    - range: 4000-4099
+      meaning: Connection should not be reconnected.
+      codes:
+        '4000': SSL only - application only accepts SSL connections; reconnect using wss.
+        '4001': Application does not exist.
+        '4003': Application disabled.
+        '4004': Application connection quota reached.
+        '4005': Path not found.
+        '4006': Invalid version string format.
+        '4007': Unsupported protocol version.
+        '4008': No protocol version supplied.
+        '4009': Connection is unauthorized.
+    - range: 4100-4199
+      meaning: Reconnect after backoff of at least 1 second.
+      codes:
+        '4100': Over capacity.
+    - range: 4200-4299
+      meaning: Generic reconnect immediately.
+      codes:
+        '4200': Generic reconnect immediately.
+        '4201': Pong reply not received - client did not pong within timeout.
+        '4202': Closed after inactivity - client should reconnect.
+    - range: 4300-4399
+      meaning: Other errors.
+      codes:
+        '4301': Client event rate limit reached.
+        '4302': Watchlist exceeded (over 100 user IDs).
