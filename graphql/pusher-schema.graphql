@@ -1,0 +1,613 @@
+"""
+Pusher GraphQL Schema
+Covers Pusher Channels (pub/sub messaging) and Pusher Beams (push notifications).
+Based on the Pusher REST API and WebSocket protocol.
+Reference: https://pusher.com/docs/channels/library_auth_reference/rest-api/
+"""
+
+# ─── Scalars ─────────────────────────────────────────────────────────────────
+
+scalar DateTime
+scalar JSON
+scalar URL
+
+# ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum ChannelType {
+  PUBLIC
+  PRIVATE
+  PRESENCE
+  ENCRYPTED
+}
+
+enum ConnectionState {
+  CONNECTING
+  CONNECTED
+  UNAVAILABLE
+  FAILED
+  DISCONNECTED
+}
+
+enum DevicePlatform {
+  IOS
+  ANDROID
+  WEB
+}
+
+enum WebhookEventType {
+  CHANNEL_OCCUPIED
+  CHANNEL_VACATED
+  MEMBER_ADDED
+  MEMBER_REMOVED
+  CLIENT_EVENT
+  CACHE_MISS
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+}
+
+# ─── App & Cluster ────────────────────────────────────────────────────────────
+
+"""A Pusher application (app_id + credentials)."""
+type App {
+  id: ID!
+  key: AppKey!
+  secret: AppSecret!
+  cluster: ClusterInfo!
+  name: String
+  channels: [AppChannel!]!
+  stats: APIStats
+  usage: APIUsage
+}
+
+"""The public app key used in client-side connections."""
+type AppKey {
+  key: String!
+  app: App!
+}
+
+"""The secret used for server-side HMAC signatures."""
+type AppSecret {
+  secret: String!
+  app: App!
+}
+
+"""Metadata about a Pusher cluster (region endpoint)."""
+type ClusterInfo {
+  id: ID!
+  name: String!
+  region: String!
+  apiHost: URL!
+  wsHost: URL!
+}
+
+# ─── Channels ────────────────────────────────────────────────────────────────
+
+"""A Pusher channel within an app."""
+type AppChannel {
+  id: ID!
+  name: String!
+  type: ChannelType!
+  app: App!
+  info: ChannelInfo
+  subscriptions: [ChannelSubscription!]!
+  occupancy: OccupancyInfo
+  presenceInfo: PresenceChannelInfo
+}
+
+"""General info about a channel returned by the REST API."""
+type ChannelInfo {
+  channel: String!
+  occupied: Boolean!
+  subscriptionCount: Int
+  userCount: Int
+  connectionCount: Int
+}
+
+"""Paginated list of channels matching a filter."""
+type ChannelList {
+  channels: [AppChannel!]!
+  totalCount: Int!
+  hasNextPage: Boolean!
+  cursor: String
+}
+
+"""A subscription record linking a socket/user to a channel."""
+type ChannelSubscription {
+  id: ID!
+  channel: AppChannel!
+  socketId: SocketID!
+  subscribedAt: DateTime!
+  userData: JSON
+}
+
+"""Presence-specific channel info including member roster."""
+type PresenceChannelInfo {
+  channel: String!
+  userCount: Int!
+  members: [PresenceMember!]!
+  hash: JSON
+}
+
+"""A single member in a presence channel."""
+type PresenceMember {
+  userId: String!
+  userInfo: JSON
+  socketId: SocketID
+  channel: AppChannel!
+}
+
+"""How many connections and subscriptions a channel has."""
+type OccupancyInfo {
+  subscriptionCount: Int!
+  userCount: Int
+}
+
+# ─── Events ──────────────────────────────────────────────────────────────────
+
+"""A single event triggered via the REST API."""
+type Event {
+  id: ID!
+  name: String!
+  channel: String!
+  data: EventData!
+  socketId: SocketID
+  sentAt: DateTime
+}
+
+"""An event ready to be triggered on one or more channels."""
+type TriggerEvent {
+  name: String!
+  channels: [String!]!
+  data: EventData!
+  socketId: SocketID
+  info: [String!]
+}
+
+"""One item in a batch trigger request."""
+type BatchEvent {
+  name: String!
+  channel: String!
+  data: EventData!
+  socketId: SocketID
+}
+
+"""The payload of a Pusher event (arbitrary JSON)."""
+type EventData {
+  raw: JSON!
+  size: Int!
+}
+
+# ─── Authentication & Sockets ─────────────────────────────────────────────────
+
+"""An authentication token returned by the auth endpoint."""
+type AuthToken {
+  auth: String!
+  channelData: JSON
+  sharedSecret: String
+}
+
+"""A WebSocket socket identifier."""
+type SocketID {
+  id: String!
+  connection: Connection
+}
+
+"""Server auth response for a private channel subscription."""
+type PrivateAuth {
+  auth: String!
+  socketId: String!
+  channel: String!
+}
+
+"""Server auth response including presence data."""
+type PresenceAuth {
+  auth: String!
+  channelData: JSON!
+  socketId: String!
+  channel: String!
+}
+
+"""Generic authorization response from the channel auth endpoint."""
+type AuthorizationResponse {
+  auth: String!
+  channelData: JSON
+  sharedSecret: String
+  socketId: String!
+  channel: String!
+}
+
+# ─── Connections ─────────────────────────────────────────────────────────────
+
+"""A WebSocket connection to a Pusher cluster."""
+type Connection {
+  socketId: SocketID!
+  state: ConnectionState!
+  cluster: ClusterInfo!
+  connectedAt: DateTime
+  lastActivityAt: DateTime
+  events: [ConnectionEvent!]!
+}
+
+"""An event emitted on a connection (connect, disconnect, error, etc.)."""
+type ConnectionEvent {
+  type: String!
+  occurredAt: DateTime!
+  data: ConnectionData
+}
+
+"""Extra data attached to a connection event."""
+type ConnectionData {
+  code: Int
+  message: String
+  reason: String
+  extra: JSON
+}
+
+# ─── Channel Types ────────────────────────────────────────────────────────────
+
+"""A public channel (no auth required)."""
+type PublicChannel {
+  name: String!
+  info: ChannelInfo
+  occupancy: OccupancyInfo
+}
+
+"""A private channel (server auth required)."""
+type PrivateChannel {
+  name: String!
+  info: ChannelInfo
+  occupancy: OccupancyInfo
+}
+
+"""A presence channel (server auth + member data)."""
+type PresenceChannel {
+  name: String!
+  info: PresenceChannelInfo
+  occupancy: OccupancyInfo
+  members: [PresenceMember!]!
+}
+
+"""An end-to-end encrypted private channel."""
+type EncryptedChannel {
+  name: String!
+  info: ChannelInfo
+  occupancy: OccupancyInfo
+  encryptionKeyFingerprint: String
+}
+
+# ─── Webhooks ────────────────────────────────────────────────────────────────
+
+"""A webhook delivery from Pusher to a server endpoint."""
+type WebhookEvent {
+  timeMs: Float!
+  events: [WebhookPayloadEvent!]!
+}
+
+"""A single event entry inside a webhook delivery."""
+type WebhookPayloadEvent {
+  name: WebhookEventType!
+  channel: String!
+  event: String
+  data: JSON
+  socketId: String
+  userId: String
+  occurredAt: DateTime!
+}
+
+"""Webhook generated when an event is published on a channel."""
+type EventWebhook {
+  name: String!
+  channel: String!
+  event: String!
+  data: JSON!
+  socketId: String
+  timeMs: Float!
+}
+
+"""Webhook generated when a channel becomes occupied or vacated."""
+type ChannelWebhook {
+  name: WebhookEventType!
+  channel: String!
+  timeMs: Float!
+}
+
+"""Webhook generated when a presence member joins or leaves."""
+type MemberWebhook {
+  name: WebhookEventType!
+  channel: String!
+  userId: String!
+  timeMs: Float!
+}
+
+# ─── Pusher Beams ────────────────────────────────────────────────────────────
+
+"""A Pusher Beams notification send request."""
+type BeamsNotification {
+  id: ID!
+  instanceId: String!
+  interests: [String!]!
+  users: [String!]
+  payload: NotificationPayload!
+  sentAt: DateTime
+  status: String
+}
+
+"""The multi-platform notification payload."""
+type NotificationPayload {
+  web: WebNotification
+  android: AndroidNotification
+  ios: IOSNotification
+  fcm: JSON
+  apns: JSON
+}
+
+"""A Web Push notification object."""
+type WebNotification {
+  title: String!
+  body: String!
+  icon: URL
+  badge: URL
+  url: URL
+  tag: String
+  requireInteraction: Boolean
+  data: JSON
+}
+
+"""An Android (FCM) notification object."""
+type AndroidNotification {
+  title: String!
+  body: String!
+  icon: String
+  color: String
+  sound: String
+  tag: String
+  clickAction: String
+  channelId: String
+  priority: NotificationPriority
+  data: JSON
+}
+
+"""An iOS (APNs) notification object."""
+type IOSNotification {
+  title: String!
+  body: String!
+  subtitle: String
+  badge: Int
+  sound: String
+  category: String
+  contentAvailable: Boolean
+  mutableContent: Boolean
+  data: JSON
+}
+
+"""A Beams token issued for authenticated user targeting."""
+type BeamsToken {
+  token: String!
+  userId: String!
+  expiresAt: DateTime!
+  instanceId: String!
+}
+
+# ─── Users & Devices ─────────────────────────────────────────────────────────
+
+"""A user known to Pusher Beams (authenticated publishing)."""
+type User {
+  id: ID!
+  userId: String!
+  devices: [Device!]!
+  interests: [UserInterest!]!
+}
+
+"""A device registered with Pusher Beams."""
+type Device {
+  id: ID!
+  platform: DevicePlatform!
+  token: String!
+  info: DeviceInfo!
+  userId: String
+  interests: [UserInterest!]!
+  registeredAt: DateTime!
+  lastSeenAt: DateTime
+}
+
+"""Metadata returned about a registered device."""
+type DeviceInfo {
+  appVersion: String
+  sdkVersion: String
+  osVersion: String
+  model: String
+  language: String
+}
+
+"""An interest (topic) a device or user is subscribed to."""
+type UserInterest {
+  name: String!
+  devices: [Device!]!
+  subscribedAt: DateTime
+}
+
+# ─── API Meta ────────────────────────────────────────────────────────────────
+
+"""A standard API response envelope."""
+type APIResponse {
+  success: Boolean!
+  statusCode: Int!
+  error: ErrorDetail
+  data: JSON
+}
+
+"""Details of an API error."""
+type ErrorDetail {
+  code: String!
+  message: String!
+  statusCode: Int
+  details: JSON
+}
+
+"""Aggregated statistics for a Pusher app."""
+type APIStats {
+  appId: String!
+  totalConnections: Int!
+  peakConnections: Int!
+  totalMessages: Int!
+  period: String!
+  recordedAt: DateTime!
+}
+
+"""API usage metrics (for billing/quota tracking)."""
+type APIUsage {
+  appId: String!
+  messagesSent: Int!
+  connectionsUsed: Int!
+  notificationsSent: Int
+  period: String!
+  quota: Int
+  percentUsed: Float
+}
+
+# ─── Inputs ──────────────────────────────────────────────────────────────────
+
+input TriggerEventInput {
+  name: String!
+  channels: [String!]!
+  data: JSON!
+  socketId: String
+  info: [String!]
+}
+
+input BatchEventInput {
+  name: String!
+  channel: String!
+  data: JSON!
+  socketId: String
+}
+
+input ChannelFilterInput {
+  prefix: String
+  type: ChannelType
+  info: [String!]
+  cursor: String
+  limit: Int
+}
+
+input BeamsNotificationInput {
+  interests: [String!]
+  users: [String!]
+  web: WebNotificationInput
+  android: AndroidNotificationInput
+  ios: IOSNotificationInput
+}
+
+input WebNotificationInput {
+  title: String!
+  body: String!
+  icon: String
+  url: String
+  data: JSON
+}
+
+input AndroidNotificationInput {
+  title: String!
+  body: String!
+  data: JSON
+  priority: NotificationPriority
+}
+
+input IOSNotificationInput {
+  title: String!
+  body: String!
+  badge: Int
+  sound: String
+  data: JSON
+}
+
+# ─── Query ───────────────────────────────────────────────────────────────────
+
+type Query {
+  """Get a Pusher app by ID."""
+  app(appId: ID!): App
+
+  """List all channels in an app, optionally filtered."""
+  channels(appId: ID!, filter: ChannelFilterInput): ChannelList!
+
+  """Get info about a specific channel."""
+  channel(appId: ID!, channelName: String!, info: [String!]): ChannelInfo
+
+  """Get presence channel member list."""
+  presenceChannelInfo(appId: ID!, channelName: String!): PresenceChannelInfo
+
+  """Get cluster metadata."""
+  cluster(clusterId: ID!): ClusterInfo
+
+  """Get API stats for an app."""
+  appStats(appId: ID!, period: String): APIStats
+
+  """Get API usage metrics for an app."""
+  appUsage(appId: ID!, period: String): APIUsage
+
+  """Get a registered Beams device."""
+  device(instanceId: ID!, deviceId: ID!): Device
+
+  """List interests for a device."""
+  deviceInterests(instanceId: ID!, deviceId: ID!): [UserInterest!]!
+
+  """Get Beams user details."""
+  beamsUser(instanceId: ID!, userId: String!): User
+}
+
+# ─── Mutation ────────────────────────────────────────────────────────────────
+
+type Mutation {
+  """Trigger one event on one or more channels."""
+  triggerEvent(appId: ID!, event: TriggerEventInput!): APIResponse!
+
+  """Trigger multiple events in a single batch."""
+  triggerBatchEvents(appId: ID!, events: [BatchEventInput!]!): APIResponse!
+
+  """Authenticate a socket for a private or presence channel."""
+  authorizeChannel(appId: ID!, socketId: String!, channelName: String!, userData: JSON): AuthorizationResponse!
+
+  """Send a notification via Pusher Beams."""
+  sendBeamsNotification(instanceId: ID!, notification: BeamsNotificationInput!): APIResponse!
+
+  """Generate a Beams token for an authenticated user."""
+  generateBeamsToken(instanceId: ID!, userId: String!): BeamsToken!
+
+  """Register a device with Pusher Beams."""
+  registerDevice(instanceId: ID!, platform: DevicePlatform!, token: String!, userId: String): Device!
+
+  """Delete a device from Pusher Beams."""
+  deleteDevice(instanceId: ID!, deviceId: ID!): APIResponse!
+
+  """Subscribe a device to an interest."""
+  addDeviceInterest(instanceId: ID!, deviceId: ID!, interest: String!): APIResponse!
+
+  """Unsubscribe a device from an interest."""
+  removeDeviceInterest(instanceId: ID!, deviceId: ID!, interest: String!): APIResponse!
+
+  """Replace all interests for a device."""
+  setDeviceInterests(instanceId: ID!, deviceId: ID!, interests: [String!]!): APIResponse!
+
+  """Delete all state for a Beams user."""
+  deleteBeamsUser(instanceId: ID!, userId: String!): APIResponse!
+}
+
+# ─── Subscription ────────────────────────────────────────────────────────────
+
+type Subscription {
+  """Subscribe to events on a channel in real time."""
+  channelEvents(appId: ID!, channelName: String!): Event!
+
+  """Subscribe to member join/leave events on a presence channel."""
+  presenceMemberEvents(appId: ID!, channelName: String!): PresenceMember!
+
+  """Subscribe to connection state changes."""
+  connectionStateChanged(socketId: String!): Connection!
+
+  """Subscribe to webhook events for an app."""
+  webhookEvents(appId: ID!): WebhookPayloadEvent!
+}
