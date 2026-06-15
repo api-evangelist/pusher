@@ -1,0 +1,199 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Pusher Channels HTTP API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "auth_signature",
+      "value": "{{auth_signature}}",
+      "placement": "query"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Events",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Trigger an event on one or more channels",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-{cluster}.pusher.com/apps/:app_id/events",
+            "params": [
+              {
+                "name": "app_id",
+                "value": "",
+                "type": "path",
+                "description": "Pusher application identifier."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Trigger an event on one or more channels"
+        },
+        {
+          "info": {
+            "name": "Trigger multiple events in a single request",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-{cluster}.pusher.com/apps/:app_id/batch_events",
+            "params": [
+              {
+                "name": "app_id",
+                "value": "",
+                "type": "path",
+                "description": "Pusher application identifier."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Trigger multiple events in a single request"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Channels",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List occupied channels",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api-{cluster}.pusher.com/apps/:app_id/channels",
+            "params": [
+              {
+                "name": "app_id",
+                "value": "",
+                "type": "path",
+                "description": "Pusher application identifier."
+              },
+              {
+                "name": "filter_by_prefix",
+                "value": "",
+                "type": "query",
+                "description": "Only include channels whose name starts with this prefix."
+              },
+              {
+                "name": "info",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated attributes to include (e.g. `user_count`)."
+              }
+            ]
+          },
+          "docs": "List occupied channels"
+        },
+        {
+          "info": {
+            "name": "Retrieve info for a single channel",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api-{cluster}.pusher.com/apps/:app_id/channels/:channel_name",
+            "params": [
+              {
+                "name": "app_id",
+                "value": "",
+                "type": "path",
+                "description": "Pusher application identifier."
+              },
+              {
+                "name": "channel_name",
+                "value": "",
+                "type": "path",
+                "description": "Channel name (e.g. `presence-room-1`)."
+              },
+              {
+                "name": "info",
+                "value": "",
+                "type": "query",
+                "description": "Comma-separated attributes to include (e.g. `user_count`, `subscription_count`, `cache`)."
+              }
+            ]
+          },
+          "docs": "Retrieve info for a single channel"
+        },
+        {
+          "info": {
+            "name": "List users in a presence channel",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api-{cluster}.pusher.com/apps/:app_id/channels/:channel_name/users",
+            "params": [
+              {
+                "name": "app_id",
+                "value": "",
+                "type": "path",
+                "description": "Pusher application identifier."
+              },
+              {
+                "name": "channel_name",
+                "value": "",
+                "type": "path",
+                "description": "Channel name (e.g. `presence-room-1`)."
+              }
+            ]
+          },
+          "docs": "List users in a presence channel"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Users",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Terminate all of a user's connections",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-{cluster}.pusher.com/apps/:app_id/users/:user_id/terminate_connections",
+            "params": [
+              {
+                "name": "app_id",
+                "value": "",
+                "type": "path",
+                "description": "Pusher application identifier."
+              },
+              {
+                "name": "user_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Terminate all of a user's connections"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
