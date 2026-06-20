@@ -2,7 +2,7 @@ aid: pusher
 url: https://raw.githubusercontent.com/api-evangelist/pusher/refs/heads/main/apis.yml
 name: Pusher
 kind: company
-image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 tags:
 - Realtime
 - WebSockets
@@ -25,7 +25,7 @@ apis:
   - WebSockets
   - HTTP
   - Messaging
-  image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
   baseURL: https://api-{cluster}.pusher.com/apps/{app_id}
   humanURL: https://pusher.com/docs/channels
   description: Pub/sub channels over WebSocket (client) and HTTP (server publish).
@@ -55,7 +55,7 @@ apis:
   - Push Notifications
   - Mobile
   - Web Push
-  image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
   baseURL: https://{instance_id}.pushnotifications.pusher.com
   humanURL: https://pusher.com/docs/beams
   description: Server API for sending iOS, Android, and Web push notifications via
