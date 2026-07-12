@@ -73,6 +73,14 @@ apis:
   - Push to mobile apps
   - Web push notifications
 common:
+- type: TrustCenter
+  url: security/pusher-trust-center.yml
+- type: VulnerabilityDisclosure
+  url: security/pusher-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/pusher-domain-security.yml
+- type: Authentication
+  url: authentication/pusher-authentication.yml
 - type: LinkedIn
   url: https://www.linkedin.com/company/pusher-app
 - type: Portal
@@ -91,6 +99,8 @@ common:
   url: rate-limits/pusher-rate-limits.yml
 - type: FinOps
   url: finops/pusher-finops.yml
+- type: Blog
+  url: https://pusher.com/blog
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
