@@ -1,0 +1,14 @@
+{
+  "repo": "pusher",
+  "feeds": [
+    {
+      "source": "https://pusher.com/blog",
+      "feed_url": "https://pusher.com/blog",
+      "title": "Pusher Blog",
+      "saved": 0,
+      "error": "parse_failed"
+    }
+  ],
+  "fetched": "2026-07-11T11:43:46Z",
+  "post_count": 20
+}
