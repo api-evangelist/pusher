@@ -73,6 +73,8 @@ apis:
   - Push to mobile apps
   - Web push notifications
 common:
+- type: AgenticAccess
+  url: agentic-access/pusher-agentic-access.yml
 - type: TrustCenter
   url: security/pusher-trust-center.yml
 - type: VulnerabilityDisclosure
