@@ -1,0 +1,89 @@
+openapi: 3.1.0
+info:
+  title: Pusher HTTP Channels Users API
+  version: 1.0.0
+  description: 'Server-side HTTP API for Pusher Channels. Used to trigger events on
+
+    channels, batch events, retrieve channel state, and list users on
+
+    presence channels. Authentication uses query-string HMAC-SHA256
+
+    signing of the request: every request requires `auth_key`,
+
+    `auth_timestamp`, `auth_version=1.0`, `body_md5` (when there is a
+
+    body) and `auth_signature`. The signature is computed over the HTTP
+
+    method, request path and the sorted query string using the
+
+    application secret.
+
+    '
+  contact:
+    name: Pusher
+    url: https://pusher.com/
+servers:
+- url: https://api-{cluster}.pusher.com
+  description: Pusher Channels HTTP API
+  variables:
+    cluster:
+      default: mt1
+      description: Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).
+security:
+- hmacAuth: []
+tags:
+- name: Users
+paths:
+  /apps/{app_id}/users/{user_id}/terminate_connections:
+    post:
+      tags:
+      - Users
+      summary: Terminate all of a user's connections
+      operationId: terminateUserConnections
+      parameters:
+      - $ref: '#/components/parameters/AppId'
+      - name: user_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Termination requested.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid signature.
+  parameters:
+    AppId:
+      name: app_id
+      in: path
+      required: true
+      description: Pusher application identifier.
+      schema:
+        type: string
+  securitySchemes:
+    hmacAuth:
+      type: apiKey
+      in: query
+      name: auth_signature
+      description: 'Pusher request signing. Every request must include the query
+
+        parameters `auth_key`, `auth_timestamp` (Unix seconds),
+
+        `auth_version=1.0`, `body_md5` (hex MD5 of the request body when
+
+        present), and `auth_signature`. `auth_signature` is the
+
+        HMAC-SHA256 (hex) of the canonical string
+
+        `"<METHOD>\n<PATH>\n<SORTED_QUERY_STRING>"` using the application
+
+        secret as the key.
+
+        '
+externalDocs:
+  description: Pusher Channels REST API reference
+  url: https://pusher.com/docs/channels/library_auth_reference/rest-api/

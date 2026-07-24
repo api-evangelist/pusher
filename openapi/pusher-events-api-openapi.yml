@@ -1,0 +1,164 @@
+openapi: 3.1.0
+info:
+  title: Pusher HTTP Channels Events API
+  version: 1.0.0
+  description: 'Server-side HTTP API for Pusher Channels. Used to trigger events on
+
+    channels, batch events, retrieve channel state, and list users on
+
+    presence channels. Authentication uses query-string HMAC-SHA256
+
+    signing of the request: every request requires `auth_key`,
+
+    `auth_timestamp`, `auth_version=1.0`, `body_md5` (when there is a
+
+    body) and `auth_signature`. The signature is computed over the HTTP
+
+    method, request path and the sorted query string using the
+
+    application secret.
+
+    '
+  contact:
+    name: Pusher
+    url: https://pusher.com/
+servers:
+- url: https://api-{cluster}.pusher.com
+  description: Pusher Channels HTTP API
+  variables:
+    cluster:
+      default: mt1
+      description: Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).
+security:
+- hmacAuth: []
+tags:
+- name: Events
+paths:
+  /apps/{app_id}/events:
+    post:
+      tags:
+      - Events
+      summary: Trigger an event on one or more channels
+      operationId: triggerEvent
+      parameters:
+      - $ref: '#/components/parameters/AppId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              - data
+              properties:
+                name:
+                  type: string
+                  description: Event name (255 characters max).
+                data:
+                  type: string
+                  description: Event payload (max 10KB). Must be a string; JSON should be pre-serialized.
+                channels:
+                  type: array
+                  items:
+                    type: string
+                  description: Up to 100 channels to broadcast to.
+                channel:
+                  type: string
+                  description: Single channel name (alternative to `channels`).
+                socket_id:
+                  type: string
+                  description: Exclude this connection ID from receiving the event.
+                info:
+                  type: string
+                  description: Comma-separated channel attributes to return (e.g. `user_count,subscription_count`).
+      responses:
+        '200':
+          description: Event accepted.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /apps/{app_id}/batch_events:
+    post:
+      tags:
+      - Events
+      summary: Trigger multiple events in a single request
+      operationId: triggerBatchEvents
+      parameters:
+      - $ref: '#/components/parameters/AppId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - batch
+              properties:
+                batch:
+                  type: array
+                  maxItems: 10
+                  items:
+                    type: object
+                    required:
+                    - name
+                    - channel
+                    - data
+                    properties:
+                      name:
+                        type: string
+                      channel:
+                        type: string
+                      data:
+                        type: string
+                      socket_id:
+                        type: string
+                      info:
+                        type: string
+      responses:
+        '200':
+          description: Batch accepted.
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid signature.
+  parameters:
+    AppId:
+      name: app_id
+      in: path
+      required: true
+      description: Pusher application identifier.
+      schema:
+        type: string
+  securitySchemes:
+    hmacAuth:
+      type: apiKey
+      in: query
+      name: auth_signature
+      description: 'Pusher request signing. Every request must include the query
+
+        parameters `auth_key`, `auth_timestamp` (Unix seconds),
+
+        `auth_version=1.0`, `body_md5` (hex MD5 of the request body when
+
+        present), and `auth_signature`. `auth_signature` is the
+
+        HMAC-SHA256 (hex) of the canonical string
+
+        `"<METHOD>\n<PATH>\n<SORTED_QUERY_STRING>"` using the application
+
+        secret as the key.
+
+        '
+externalDocs:
+  description: Pusher Channels REST API reference
+  url: https://pusher.com/docs/channels/library_auth_reference/rest-api/
