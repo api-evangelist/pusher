@@ -2,7 +2,20 @@ aid: pusher
 url: https://raw.githubusercontent.com/api-evangelist/pusher/refs/heads/main/apis.yml
 name: Pusher
 kind: company
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+accessModel:
+  pricing: freemium
+  onboarding: self-serve
+  trial: false
+  try_now: true
+  public: false
+  label: Freemium · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/pusher.png
 tags:
 - Realtime
 - WebSockets
@@ -28,9 +41,10 @@ apis:
   image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
   baseURL: https://api-{cluster}.pusher.com/apps/{app_id}
   humanURL: https://pusher.com/docs/channels
-  description: Pub/sub channels over WebSocket (client) and HTTP (server publish).
-    Public, private, and presence channels supported. WebSocket endpoint at ws-{cluster}.pusher.com.
-    Cluster hostnames include eu, us2, us3, ap1, ap2, ap3, etc.
+  description: >-
+    Pub/sub channels over WebSocket (client) and HTTP (server publish). Public, private, and presence
+    channels supported. WebSocket endpoint at ws-{cluster}.pusher.com. Cluster hostnames include eu, us2,
+    us3, ap1, ap2, ap3, etc.
   properties:
   - type: Documentation
     url: https://pusher.com/docs/channels
@@ -58,8 +72,8 @@ apis:
   image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
   baseURL: https://{instance_id}.pushnotifications.pusher.com
   humanURL: https://pusher.com/docs/beams
-  description: Server API for sending iOS, Android, and Web push notifications via
-    FCM, APNs, and Web Push.
+  description: >-
+    Server API for sending iOS, Android, and Web push notifications via FCM, APNs, and Web Push.
   properties:
   - type: Documentation
     url: https://pusher.com/docs/beams
@@ -72,6 +86,36 @@ apis:
   x-use-cases:
   - Push to mobile apps
   - Web push notifications
+- aid: pusher:pusher-channels-api
+  name: Pusher Channels API
+  description: The Channels API from Pusher — 3 operation(s) for channels.
+  humanURL: https://pusher.com/docs/channels
+  baseURL: https://api-{cluster}.pusher.com/apps/{app_id}
+  tags:
+  - Channels
+  properties:
+  - type: OpenAPI
+    url: openapi/pusher-channels-api-openapi.yml
+- aid: pusher:pusher-events-api
+  name: Pusher Events API
+  description: The Events API from Pusher — 2 operation(s) for events.
+  humanURL: https://pusher.com/docs/channels
+  baseURL: https://api-{cluster}.pusher.com/apps/{app_id}
+  tags:
+  - Events
+  properties:
+  - type: OpenAPI
+    url: openapi/pusher-events-api-openapi.yml
+- aid: pusher:pusher-users-api
+  name: Pusher Users API
+  description: The Users API from Pusher — 1 operation(s) for users.
+  humanURL: https://pusher.com/docs/channels
+  baseURL: https://api-{cluster}.pusher.com/apps/{app_id}
+  tags:
+  - Users
+  properties:
+  - type: OpenAPI
+    url: openapi/pusher-users-api-openapi.yml
 common:
 - type: AgenticAccess
   url: agentic-access/pusher-agentic-access.yml
