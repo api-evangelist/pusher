@@ -1,0 +1,252 @@
+openapi: 3.1.0
+info:
+  title: Pusher Channels HTTP API
+  version: "1.0.0"
+  description: |
+    Server-side HTTP API for Pusher Channels. Used to trigger events on
+    channels, batch events, retrieve channel state, and list users on
+    presence channels. Authentication uses query-string HMAC-SHA256
+    signing of the request: every request requires `auth_key`,
+    `auth_timestamp`, `auth_version=1.0`, `body_md5` (when there is a
+    body) and `auth_signature`. The signature is computed over the HTTP
+    method, request path and the sorted query string using the
+    application secret.
+  contact:
+    name: Pusher
+    url: https://pusher.com/
+externalDocs:
+  description: Pusher Channels REST API reference
+  url: https://pusher.com/docs/channels/library_auth_reference/rest-api/
+servers:
+  - url: https://api-{cluster}.pusher.com
+    description: Pusher Channels HTTP API
+    variables:
+      cluster:
+        default: mt1
+        description: Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).
+security:
+  - hmacAuth: []
+tags:
+  - name: Events
+  - name: Channels
+  - name: Users
+paths:
+  /apps/{app_id}/events:
+    post:
+      tags: [Events]
+      summary: Trigger an event on one or more channels
+      operationId: triggerEvent
+      parameters:
+        - $ref: '#/components/parameters/AppId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, data]
+              properties:
+                name:
+                  type: string
+                  description: Event name (255 characters max).
+                data:
+                  type: string
+                  description: Event payload (max 10KB). Must be a string; JSON should be pre-serialized.
+                channels:
+                  type: array
+                  items:
+                    type: string
+                  description: Up to 100 channels to broadcast to.
+                channel:
+                  type: string
+                  description: Single channel name (alternative to `channels`).
+                socket_id:
+                  type: string
+                  description: Exclude this connection ID from receiving the event.
+                info:
+                  type: string
+                  description: Comma-separated channel attributes to return (e.g. `user_count,subscription_count`).
+      responses:
+        "200":
+          description: Event accepted.
+          content:
+            application/json:
+              schema:
+                type: object
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+  /apps/{app_id}/batch_events:
+    post:
+      tags: [Events]
+      summary: Trigger multiple events in a single request
+      operationId: triggerBatchEvents
+      parameters:
+        - $ref: '#/components/parameters/AppId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [batch]
+              properties:
+                batch:
+                  type: array
+                  maxItems: 10
+                  items:
+                    type: object
+                    required: [name, channel, data]
+                    properties:
+                      name:
+                        type: string
+                      channel:
+                        type: string
+                      data:
+                        type: string
+                      socket_id:
+                        type: string
+                      info:
+                        type: string
+      responses:
+        "200":
+          description: Batch accepted.
+          content:
+            application/json:
+              schema:
+                type: object
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+  /apps/{app_id}/channels:
+    get:
+      tags: [Channels]
+      summary: List occupied channels
+      operationId: listChannels
+      parameters:
+        - $ref: '#/components/parameters/AppId'
+        - name: filter_by_prefix
+          in: query
+          description: Only include channels whose name starts with this prefix.
+          schema:
+            type: string
+        - name: info
+          in: query
+          description: Comma-separated attributes to include (e.g. `user_count`).
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Map of channel names to attributes.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  channels:
+                    type: object
+                    additionalProperties:
+                      type: object
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+  /apps/{app_id}/channels/{channel_name}:
+    get:
+      tags: [Channels]
+      summary: Retrieve info for a single channel
+      operationId: getChannel
+      parameters:
+        - $ref: '#/components/parameters/AppId'
+        - $ref: '#/components/parameters/ChannelName'
+        - name: info
+          in: query
+          description: Comma-separated attributes to include (e.g. `user_count`, `subscription_count`, `cache`).
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Channel attributes.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  occupied:
+                    type: boolean
+                  user_count:
+                    type: integer
+                  subscription_count:
+                    type: integer
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+  /apps/{app_id}/channels/{channel_name}/users:
+    get:
+      tags: [Channels]
+      summary: List users in a presence channel
+      operationId: listChannelUsers
+      parameters:
+        - $ref: '#/components/parameters/AppId'
+        - $ref: '#/components/parameters/ChannelName'
+      responses:
+        "200":
+          description: Array of user IDs subscribed to the presence channel.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+  /apps/{app_id}/users/{user_id}/terminate_connections:
+    post:
+      tags: [Users]
+      summary: Terminate all of a user's connections
+      operationId: terminateUserConnections
+      parameters:
+        - $ref: '#/components/parameters/AppId'
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Termination requested.
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+components:
+  securitySchemes:
+    hmacAuth:
+      type: apiKey
+      in: query
+      name: auth_signature
+      description: |
+        Pusher request signing. Every request must include the query
+        parameters `auth_key`, `auth_timestamp` (Unix seconds),
+        `auth_version=1.0`, `body_md5` (hex MD5 of the request body when
+        present), and `auth_signature`. `auth_signature` is the
+        HMAC-SHA256 (hex) of the canonical string
+        `"<METHOD>\n<PATH>\n<SORTED_QUERY_STRING>"` using the application
+        secret as the key.
+  parameters:
+    AppId:
+      name: app_id
+      in: path
+      required: true
+      description: Pusher application identifier.
+      schema:
+        type: string
+    ChannelName:
+      name: channel_name
+      in: path
+      required: true
+      description: Channel name (e.g. `presence-room-1`).
+      schema:
+        type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid signature.

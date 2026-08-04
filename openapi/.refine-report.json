@@ -1,0 +1,18 @@
+{
+  "provider": "pusher",
+  "sources": [
+    "pusher-channels-api-openapi.yml",
+    "pusher-events-api-openapi.yml",
+    "pusher-users-api-openapi.yml"
+  ],
+  "outputs": [
+    "pusher-channels-api-openapi.yml",
+    "pusher-events-api-openapi.yml",
+    "pusher-users-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
