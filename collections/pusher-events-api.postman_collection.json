@@ -1,0 +1,424 @@
+{
+  "item": [
+    {
+      "id": "3eff392b-a9dd-4666-917d-2fdf11531388",
+      "name": "Events",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "752e2d71-0b11-47a7-8629-a4fa98d3f58d",
+          "name": "Trigger an event on one or more channels",
+          "request": {
+            "name": "Trigger an event on one or more channels",
+            "description": {},
+            "url": {
+              "path": [
+                "apps",
+                ":app_id",
+                "events"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "app_id",
+                  "description": "(Required) Pusher application identifier."
+                },
+                {
+                  "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                  "type": "any",
+                  "value": "{{cluster}}",
+                  "key": "cluster"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"<string>\",\n  \"data\": \"<string>\",\n  \"channels\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"channel\": \"<string>\",\n  \"socket_id\": \"<string>\",\n  \"info\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "9f6baa03-3439-44b0-80fe-b3a7ac35f1ea",
+              "name": "Event accepted.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "apps",
+                    ":app_id",
+                    "events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "auth_signature",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "app_id",
+                      "description": "(Required) Pusher application identifier."
+                    },
+                    {
+                      "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                      "type": "any",
+                      "value": "{{cluster}}",
+                      "key": "cluster"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"data\": \"<string>\",\n  \"channels\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"channel\": \"<string>\",\n  \"socket_id\": \"<string>\",\n  \"info\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ff19e5b0-25e0-4082-bc8c-853a556e87aa",
+              "name": "Missing or invalid signature.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "apps",
+                    ":app_id",
+                    "events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "auth_signature",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "app_id",
+                      "description": "(Required) Pusher application identifier."
+                    },
+                    {
+                      "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                      "type": "any",
+                      "value": "{{cluster}}",
+                      "key": "cluster"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"data\": \"<string>\",\n  \"channels\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"channel\": \"<string>\",\n  \"socket_id\": \"<string>\",\n  \"info\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "11cf0aba-c4b8-47b9-b5e6-80c23c6c887c",
+          "name": "Trigger multiple events in a single request",
+          "request": {
+            "name": "Trigger multiple events in a single request",
+            "description": {},
+            "url": {
+              "path": [
+                "apps",
+                ":app_id",
+                "batch_events"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "app_id",
+                  "description": "(Required) Pusher application identifier."
+                },
+                {
+                  "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                  "type": "any",
+                  "value": "{{cluster}}",
+                  "key": "cluster"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"batch\": [\n    {\n      \"name\": \"<string>\",\n      \"channel\": \"<string>\",\n      \"data\": \"<string>\",\n      \"socket_id\": \"<string>\",\n      \"info\": \"<string>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"channel\": \"<string>\",\n      \"data\": \"<string>\",\n      \"socket_id\": \"<string>\",\n      \"info\": \"<string>\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "52c96193-01df-4044-ac3e-8b2e5a703ed9",
+              "name": "Batch accepted.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "apps",
+                    ":app_id",
+                    "batch_events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "auth_signature",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "app_id",
+                      "description": "(Required) Pusher application identifier."
+                    },
+                    {
+                      "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                      "type": "any",
+                      "value": "{{cluster}}",
+                      "key": "cluster"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"batch\": [\n    {\n      \"name\": \"<string>\",\n      \"channel\": \"<string>\",\n      \"data\": \"<string>\",\n      \"socket_id\": \"<string>\",\n      \"info\": \"<string>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"channel\": \"<string>\",\n      \"data\": \"<string>\",\n      \"socket_id\": \"<string>\",\n      \"info\": \"<string>\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "79f58b19-95d0-42da-87dc-85406eda7f81",
+              "name": "Missing or invalid signature.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "apps",
+                    ":app_id",
+                    "batch_events"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "auth_signature",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "app_id",
+                      "description": "(Required) Pusher application identifier."
+                    },
+                    {
+                      "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                      "type": "any",
+                      "value": "{{cluster}}",
+                      "key": "cluster"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"batch\": [\n    {\n      \"name\": \"<string>\",\n      \"channel\": \"<string>\",\n      \"data\": \"<string>\",\n      \"socket_id\": \"<string>\",\n      \"info\": \"<string>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"channel\": \"<string>\",\n      \"data\": \"<string>\",\n      \"socket_id\": \"<string>\",\n      \"info\": \"<string>\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "mt1",
+      "key": "cluster"
+    },
+    {
+      "type": "string",
+      "value": "https://api-{{cluster}}.pusher.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "auth_signature"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "query"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "6bcc3cf1-6c31-4e03-a712-b4aeb40b4f0f",
+    "name": "Pusher HTTP Channels Events API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Server-side HTTP API for Pusher Channels. Used to trigger events on\nchannels, batch events, retrieve channel state, and list users on\npresence channels. Authentication uses query-string HMAC-SHA256\nsigning of the request: every request requires `auth_key`,\n`auth_timestamp`, `auth_version=1.0`, `body_md5` (when there is a\nbody) and `auth_signature`. The signature is computed over the HTTP\nmethod, request path and the sorted query string using the\napplication secret.\n\n\nContact Support:\n Name: Pusher",
+      "type": "text/plain"
+    }
+  }
+}

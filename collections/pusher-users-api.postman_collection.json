@@ -1,0 +1,227 @@
+{
+  "item": [
+    {
+      "id": "9f6b578e-be14-4cff-933d-fb325c1ce80a",
+      "name": "Users",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "3857c182-488d-43e6-a5e6-265dddc9bd03",
+          "name": "Terminate all of a user's connections",
+          "request": {
+            "name": "Terminate all of a user's connections",
+            "description": {},
+            "url": {
+              "path": [
+                "apps",
+                ":app_id",
+                "users",
+                ":user_id",
+                "terminate_connections"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "app_id",
+                  "description": "(Required) Pusher application identifier."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "user_id",
+                  "description": "(Required) "
+                },
+                {
+                  "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                  "type": "any",
+                  "value": "{{cluster}}",
+                  "key": "cluster"
+                }
+              ]
+            },
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "ed411141-e716-4939-bf8e-826382ecc266",
+              "name": "Termination requested.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "apps",
+                    ":app_id",
+                    "users",
+                    ":user_id",
+                    "terminate_connections"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "auth_signature",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "app_id",
+                      "description": "(Required) Pusher application identifier."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "user_id",
+                      "description": "(Required) "
+                    },
+                    {
+                      "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                      "type": "any",
+                      "value": "{{cluster}}",
+                      "key": "cluster"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "f45a296c-0859-4746-aacf-afdbe934a29c",
+              "name": "Missing or invalid signature.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "apps",
+                    ":app_id",
+                    "users",
+                    ":user_id",
+                    "terminate_connections"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "auth_signature",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "app_id",
+                      "description": "(Required) Pusher application identifier."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "user_id",
+                      "description": "(Required) "
+                    },
+                    {
+                      "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                      "type": "any",
+                      "value": "{{cluster}}",
+                      "key": "cluster"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "mt1",
+      "key": "cluster"
+    },
+    {
+      "type": "string",
+      "value": "https://api-{{cluster}}.pusher.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "auth_signature"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "query"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "5050002f-87a6-449a-a1f9-6e1ea32180bc",
+    "name": "Pusher HTTP Channels Users API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Server-side HTTP API for Pusher Channels. Used to trigger events on\nchannels, batch events, retrieve channel state, and list users on\npresence channels. Authentication uses query-string HMAC-SHA256\nsigning of the request: every request requires `auth_key`,\n`auth_timestamp`, `auth_version=1.0`, `body_md5` (when there is a\nbody) and `auth_signature`. The signature is computed over the HTTP\nmethod, request path and the sorted query string using the\napplication secret.\n\n\nContact Support:\n Name: Pusher",
+      "type": "text/plain"
+    }
+  }
+}

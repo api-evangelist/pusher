@@ -1,0 +1,72 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Pusher HTTP Channels Events API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "auth_signature",
+      "value": "{{auth_signature}}",
+      "placement": "query"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Events",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Trigger an event on one or more channels",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-{cluster}.pusher.com/apps/:app_id/events",
+            "params": [
+              {
+                "name": "app_id",
+                "value": "",
+                "type": "path",
+                "description": "Pusher application identifier."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Trigger an event on one or more channels"
+        },
+        {
+          "info": {
+            "name": "Trigger multiple events in a single request",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-{cluster}.pusher.com/apps/:app_id/batch_events",
+            "params": [
+              {
+                "name": "app_id",
+                "value": "",
+                "type": "path",
+                "description": "Pusher application identifier."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Trigger multiple events in a single request"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,615 @@
+{
+  "item": [
+    {
+      "id": "2af1ec39-f89f-4a24-9bc1-09ef060323df",
+      "name": "Channels",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "96048be4-456f-49a1-b358-a5714949511e",
+          "name": "List occupied channels",
+          "request": {
+            "name": "List occupied channels",
+            "description": {},
+            "url": {
+              "path": [
+                "apps",
+                ":app_id",
+                "channels"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "filter_by_prefix",
+                  "value": "<string>",
+                  "description": "Only include channels whose name starts with this prefix."
+                },
+                {
+                  "disabled": false,
+                  "key": "info",
+                  "value": "<string>",
+                  "description": "Comma-separated attributes to include (e.g. `user_count`)."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "app_id",
+                  "description": "(Required) Pusher application identifier."
+                },
+                {
+                  "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                  "type": "any",
+                  "value": "{{cluster}}",
+                  "key": "cluster"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "58b498f4-bee8-40cc-b8ac-342a17f77ea5",
+              "name": "Map of channel names to attributes.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "apps",
+                    ":app_id",
+                    "channels"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "filter_by_prefix",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "info",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "auth_signature",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "app_id",
+                      "description": "(Required) Pusher application identifier."
+                    },
+                    {
+                      "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                      "type": "any",
+                      "value": "{{cluster}}",
+                      "key": "cluster"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"channels\": {\n    \"key_0\": {}\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b538b1a6-4c10-42bc-9229-3d47344c4d0f",
+              "name": "Missing or invalid signature.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "apps",
+                    ":app_id",
+                    "channels"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "filter_by_prefix",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "info",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "auth_signature",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "app_id",
+                      "description": "(Required) Pusher application identifier."
+                    },
+                    {
+                      "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                      "type": "any",
+                      "value": "{{cluster}}",
+                      "key": "cluster"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "eaf07f6c-4e80-4584-a616-6b682194a32c",
+          "name": "Retrieve info for a single channel",
+          "request": {
+            "name": "Retrieve info for a single channel",
+            "description": {},
+            "url": {
+              "path": [
+                "apps",
+                ":app_id",
+                "channels",
+                ":channel_name"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "info",
+                  "value": "<string>",
+                  "description": "Comma-separated attributes to include (e.g. `user_count`, `subscription_count`, `cache`)."
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "app_id",
+                  "description": "(Required) Pusher application identifier."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "channel_name",
+                  "description": "(Required) Channel name (e.g. `presence-room-1`)."
+                },
+                {
+                  "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                  "type": "any",
+                  "value": "{{cluster}}",
+                  "key": "cluster"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "714df914-4022-4d4b-bbac-556e91e6447d",
+              "name": "Channel attributes.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "apps",
+                    ":app_id",
+                    "channels",
+                    ":channel_name"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "info",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "auth_signature",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "app_id",
+                      "description": "(Required) Pusher application identifier."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "channel_name",
+                      "description": "(Required) Channel name (e.g. `presence-room-1`)."
+                    },
+                    {
+                      "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                      "type": "any",
+                      "value": "{{cluster}}",
+                      "key": "cluster"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"occupied\": true,\n  \"user_count\": 2632,\n  \"subscription_count\": 6373\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1e84ff84-14b3-4877-b05b-3817c34b4570",
+              "name": "Missing or invalid signature.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "apps",
+                    ":app_id",
+                    "channels",
+                    ":channel_name"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "info",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "auth_signature",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "app_id",
+                      "description": "(Required) Pusher application identifier."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "channel_name",
+                      "description": "(Required) Channel name (e.g. `presence-room-1`)."
+                    },
+                    {
+                      "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                      "type": "any",
+                      "value": "{{cluster}}",
+                      "key": "cluster"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "8a9de79d-9001-44c6-9fba-f090ea38c6de",
+          "name": "List users in a presence channel",
+          "request": {
+            "name": "List users in a presence channel",
+            "description": {},
+            "url": {
+              "path": [
+                "apps",
+                ":app_id",
+                "channels",
+                ":channel_name",
+                "users"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "app_id",
+                  "description": "(Required) Pusher application identifier."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "channel_name",
+                  "description": "(Required) Channel name (e.g. `presence-room-1`)."
+                },
+                {
+                  "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                  "type": "any",
+                  "value": "{{cluster}}",
+                  "key": "cluster"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "9cf1deec-a525-4571-88d6-d1d285102d49",
+              "name": "Array of user IDs subscribed to the presence channel.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "apps",
+                    ":app_id",
+                    "channels",
+                    ":channel_name",
+                    "users"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "auth_signature",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "app_id",
+                      "description": "(Required) Pusher application identifier."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "channel_name",
+                      "description": "(Required) Channel name (e.g. `presence-room-1`)."
+                    },
+                    {
+                      "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                      "type": "any",
+                      "value": "{{cluster}}",
+                      "key": "cluster"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"users\": [\n    {\n      \"id\": \"string\"\n    },\n    {\n      \"id\": \"string\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "797de298-1f3c-463b-8d0e-960e81c1cdb6",
+              "name": "Missing or invalid signature.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "apps",
+                    ":app_id",
+                    "channels",
+                    ":channel_name",
+                    "users"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "auth_signature",
+                      "value": "<API Key>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "app_id",
+                      "description": "(Required) Pusher application identifier."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "channel_name",
+                      "description": "(Required) Channel name (e.g. `presence-room-1`)."
+                    },
+                    {
+                      "description": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+                      "type": "any",
+                      "value": "{{cluster}}",
+                      "key": "cluster"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "description": {
+        "content": "Pusher cluster (e.g. mt1, eu, us2, us3, ap1, ap2, ap3).",
+        "type": "text/plain"
+      },
+      "type": "any",
+      "value": "mt1",
+      "key": "cluster"
+    },
+    {
+      "type": "string",
+      "value": "https://api-{{cluster}}.pusher.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "auth_signature"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "query"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "ffa1f865-5dd9-4ec6-b21a-68c794b3c940",
+    "name": "Pusher HTTP Channels API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Server-side HTTP API for Pusher Channels. Used to trigger events on\nchannels, batch events, retrieve channel state, and list users on\npresence channels. Authentication uses query-string HMAC-SHA256\nsigning of the request: every request requires `auth_key`,\n`auth_timestamp`, `auth_version=1.0`, `body_md5` (when there is a\nbody) and `auth_signature`. The signature is computed over the HTTP\nmethod, request path and the sorted query string using the\napplication secret.\n\n\nContact Support:\n Name: Pusher",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Pusher HTTP Channels Users API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "auth_signature",
+      "value": "{{auth_signature}}",
+      "placement": "query"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Users",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Terminate all of a user's connections",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api-{cluster}.pusher.com/apps/:app_id/users/:user_id/terminate_connections",
+            "params": [
+              {
+                "name": "app_id",
+                "value": "",
+                "type": "path",
+                "description": "Pusher application identifier."
+              },
+              {
+                "name": "user_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Terminate all of a user's connections"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
