@@ -24,7 +24,7 @@ tags:
 - Messaging
 created: '2026-05-08'
 modified: '2026-05-29'
-specificationVersion: '0.19'
+specificationVersion: '0.23'
 description: Pusher is a realtime communication platform owned by MessageBird/Bird.
   Its primary product Channels provides pub/sub messaging over WebSocket and HTTP;
   Beams provides device push notifications. Authentication uses an app key + secret
