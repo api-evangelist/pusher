@@ -17,6 +17,12 @@ accessModel:
   method: derived
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/pusher.png
 tags:
+- Real-Time
+- WebSockets
+- Pub-Sub
+- Push Notifications
+- Messaging
+tags_raw:
 - Realtime
 - WebSockets
 - Pub/Sub
@@ -34,6 +40,11 @@ apis:
 - aid: pusher:channels-api
   name: Pusher Channels API
   tags:
+  - Pub-Sub
+  - WebSockets
+  - HTTP
+  - Messaging
+  tags_raw:
   - Pub/Sub
   - WebSockets
   - HTTP
@@ -102,6 +113,8 @@ apis:
   humanURL: https://pusher.com/docs/channels
   baseURL: https://api-{cluster}.pusher.com/apps/{app_id}
   tags:
+  - Event
+  tags_raw:
   - Events
   properties:
   - type: OpenAPI
@@ -112,6 +125,8 @@ apis:
   humanURL: https://pusher.com/docs/channels
   baseURL: https://api-{cluster}.pusher.com/apps/{app_id}
   tags:
+  - User
+  tags_raw:
   - Users
   properties:
   - type: OpenAPI
