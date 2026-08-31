@@ -31,7 +31,7 @@ image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/pusher.png
 tags:
 - Real-Time
 - WebSockets
-- Pub-Sub
+- Pub/Sub
 - Push Notifications
 - Messaging
 tags_raw:
@@ -52,7 +52,7 @@ apis:
 - aid: pusher:channels-api
   name: Pusher Channels API
   tags:
-  - Pub-Sub
+  - Pub/Sub
   - WebSockets
   - HTTP
   - Messaging
