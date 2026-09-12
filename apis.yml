@@ -145,6 +145,8 @@ apis:
   - type: OpenAPI
     url: openapi/pusher-users-api-openapi.yml
 common:
+- type: Website
+  url: https://www.pusher.com/
 - type: AgenticAccess
   url: agentic-access/pusher-agentic-access.yml
 - type: TrustCenter
