@@ -31,7 +31,7 @@ accessModel:
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/pusher.png
 tags:
 - Real-Time
-- WebSockets
+- WebSocket
 - Pub-Sub
 - Push Notifications
 - Messaging
@@ -54,7 +54,7 @@ apis:
   name: Pusher Channels API
   tags:
   - Pub-Sub
-  - WebSockets
+  - WebSocket
   - HTTP
   - Messaging
   tags_raw:
