@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Pusher HTTP Channels Users API
+  title: Pusher Channels HTTP Users API
   version: 1.0.0
   description: 'Server-side HTTP API for Pusher Channels. Used to trigger events on
 
@@ -16,9 +16,7 @@ info:
 
     method, request path and the sorted query string using the
 
-    application secret.
-
-    '
+    application secret.'
   contact:
     name: Pusher
     url: https://pusher.com/
