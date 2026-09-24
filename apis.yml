@@ -76,8 +76,6 @@ apis:
     url: https://pusher.com/channels/pricing
   - type: AsyncAPI
     url: asyncapi/pusher-asyncapi.yml
-  - url: graphql/pusher-graphql.md
-    type: GraphQL
   x-features:
   - Public, private, presence channels
   - End-to-end encryption (E2E)
