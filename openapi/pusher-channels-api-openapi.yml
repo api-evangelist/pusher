@@ -122,18 +122,18 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   parameters:
-    ChannelName:
-      name: channel_name
-      in: path
-      required: true
-      description: Channel name (e.g. `presence-room-1`).
-      schema:
-        type: string
     AppId:
       name: app_id
       in: path
       required: true
       description: Pusher application identifier.
+      schema:
+        type: string
+    ChannelName:
+      name: channel_name
+      in: path
+      required: true
+      description: Channel name (e.g. `presence-room-1`).
       schema:
         type: string
   responses:

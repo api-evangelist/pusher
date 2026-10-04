@@ -51,9 +51,6 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  responses:
-    Unauthorized:
-      description: Missing or invalid signature.
   parameters:
     AppId:
       name: app_id
@@ -62,6 +59,9 @@ components:
       description: Pusher application identifier.
       schema:
         type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid signature.
   securitySchemes:
     hmacAuth:
       type: apiKey
