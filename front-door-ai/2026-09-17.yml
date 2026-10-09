@@ -7,14 +7,17 @@ front_door_ai:
   probed_at: '2026-09-17'
   host: www.pusher.com
   final_host: pusher.com
-  ownership: inherited
+  ownership: own
   owner: pusher
   shares_host_with: null
-  inherited_from: pusher.com
+  inherited_from: null
+  alias_of: pusher.com
   verdict: silent
-  score: null
+  score: 0
+  band: 1
+  band_label: silent
   host_score: 0
-  density: null
+  density: 0.0
   words: 966
   tiers:
     agentic: 0
