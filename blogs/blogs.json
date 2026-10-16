@@ -4,14 +4,12 @@
     {
       "source": "https://pusher.com/blog",
       "feed_url": "https://pusher.com/blog",
-      "title": "Pusher Blog",
+      "title": "",
       "saved": 0,
-      "error": "parse_failed",
-      "nature": "vendor-blog",
-      "nature_basis": "path_blog"
+      "method": "none"
     }
   ],
-  "fetched": "2026-10-03T12:15:37Z",
+  "fetched": "2026-10-10T13:15:00Z",
   "post_count": 20,
   "feed_nature": "vendor-blog",
   "feed_nature_basis": "path_blog",
